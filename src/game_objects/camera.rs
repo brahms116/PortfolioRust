@@ -56,14 +56,14 @@ impl Camera {
 			let mut screen_vert_vec = Vec::<utils::Point>::new();
 			screen_vert_vec.reserve(vert_vec.len());
 			for vert in &vert_vec {
-				// floor division being used here might want to use f64 in the future?
 				let x = self.screen_width / 2 + (vert.x - self.anchor.x) * self.zoom;
 				let y = self.screen_height / 2 + (vert.y - self.anchor.y) * self.zoom;
-
-				//@todo push it in screen_vert_vec
+				screen_vert_vec.push(utils::Point { x: x, y: y })
 			}
-			self.ctx.move_to(vert_vec[0].x as f64, vert_vec[0].y as f64);
-			for vert in &vert_vec[1..] {
+			self
+				.ctx
+				.move_to(screen_vert_vec[0].x as f64, screen_vert_vec[0].y as f64);
+			for vert in &screen_vert_vec[1..] {
 				self.ctx.line_to(vert.x as f64, vert.y as f64);
 			}
 			self.ctx.fill();

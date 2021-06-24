@@ -1,4 +1,19 @@
+use crate::utils;
 pub struct DemoStruct {
-	pub name: String,
-	pub value: i32,
+	origin: utils::Point,
+}
+
+impl utils::Entity for DemoStruct {
+	fn get_draw_data(&self) -> utils::EntityDrawData {
+		let mut vert = Vec::<utils::Point>::new();
+		vert.reserve(4);
+		vert.push(utils::Point::new(self.origin.x, self.origin.y));
+		vert.push(utils::Point::new(self.origin.x + 10, self.origin.y));
+		vert.push(utils::Point::new(self.origin.x + 10, self.origin.y + 10));
+		vert.push(utils::Point::new(self.origin.x, self.origin.y + 10));
+		utils::EntityDrawData {
+			vertices: vert,
+			color: String::from("#000000"),
+		}
+	}
 }
