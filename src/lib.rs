@@ -1,11 +1,11 @@
+use std::cell::RefCell;
+use std::rc::Rc;
 use wasm_bindgen::prelude::*;
-use web_sys::console;
-
+use wasm_bindgen::JsCast;
+mod game_objects;
+mod utils;
 
 #[wasm_bindgen(start)]
-pub fn run(){
-    console::log_1(&"helloworld".into())
+pub fn run() {
+    let window = web_sys::window().unwrap();
 }
-
-
-
