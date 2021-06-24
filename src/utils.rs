@@ -3,8 +3,11 @@ pub struct Point {
 	pub y: i32,
 }
 
-pub struct Rect {
-	pub anchor: Point,
-	pub length: i32,
-	pub width: i32,
+pub struct EntityDrawData {
+	pub vertices: Vec<Point>,
+	pub color: String,
+}
+
+pub trait Entity {
+	fn get_draw_data(&self) -> EntityDrawData;
 }
