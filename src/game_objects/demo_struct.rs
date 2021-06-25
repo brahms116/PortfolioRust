@@ -2,6 +2,13 @@ use crate::utils;
 pub struct DemoStruct {
 	origin: utils::Point,
 }
+impl DemoStruct {
+	pub fn new(x: i32, y: i32) -> DemoStruct {
+		DemoStruct {
+			origin: utils::Point::new(x, y),
+		}
+	}
+}
 
 impl utils::Entity for DemoStruct {
 	fn get_draw_data(&self) -> utils::EntityDrawData {

@@ -1,11 +1,11 @@
-use std::cell::RefCell;
-use std::rc::Rc;
 use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsCast;
+mod controllers;
 mod game_objects;
 mod scenes;
 mod utils;
+use scenes::simulation_scene::*;
 #[wasm_bindgen(start)]
 pub fn run() {
-    let window = web_sys::window().unwrap();
+    let simulation_scene = SimulationScene::new();
+    simulation_scene.start();
 }

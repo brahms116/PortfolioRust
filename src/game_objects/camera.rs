@@ -36,6 +36,12 @@ impl Camera {
 			canvas: canvas,
 		}
 	}
+	pub fn get_zoom(&self) -> i32 {
+		self.zoom
+	}
+	pub fn set_zoom(&mut self, zoom: i32) {
+		self.zoom = zoom;
+	}
 	pub fn update_screen_dimensions(&mut self) {
 		self.screen_height = self
 			.window
@@ -45,6 +51,17 @@ impl Camera {
 			.unwrap()
 			.round() as i32;
 		self.screen_width = self.window.inner_width().unwrap().as_f64().unwrap().round() as i32;
+		self.canvas.set_height(self.screen_height as u32);
+		self.canvas.set_width(self.screen_width as u32);
+	}
+	pub fn clear(&self) {
+		self.ctx.set_fill_style(&"#FFFFFF".into());
+		self.ctx.fill_rect(
+			0.0,
+			0.0,
+			self.screen_width as f64,
+			self.screen_height as f64,
+		)
 	}
 	pub fn draw(&self, entity: &Box<dyn utils::Entity>) {
 		let draw_data = entity.get_draw_data();
