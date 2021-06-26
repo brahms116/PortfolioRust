@@ -27,7 +27,7 @@ impl Camera {
 			.dyn_into::<web_sys::CanvasRenderingContext2d>()
 			.unwrap();
 		Camera {
-			zoom: 0,
+			zoom: 1,
 			anchor: utils::Point { x: 0, y: 0 },
 			screen_height: 0,
 			screen_width: 0,

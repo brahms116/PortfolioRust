@@ -15,33 +15,34 @@ fn request_animation_frame(f: &Closure<dyn FnMut()>) {
 }
 pub struct SimulationScene {
 	static_entities: Vec<Box<dyn utils::Entity>>,
-	camera: Camera,
+	camera: Rc<RefCell<Camera>>,
 }
 
 impl SimulationScene {
 	pub fn new() -> SimulationScene {
 		SimulationScene {
 			static_entities: Vec::new(),
-			camera: Camera::new(),
+			camera: Rc::new(RefCell::new(Camera::new())),
 		}
 	}
 	pub fn create_controller(&mut self) -> SimulationController {
-		SimulationController::new(&mut self.camera)
+		SimulationController::new(Rc::clone(&self.camera))
 	}
 	pub fn start(mut self) {
 		let f = Rc::new(RefCell::<Option<Closure<dyn FnMut()>>>::new(None));
 		let g = Rc::clone(&f);
 		let demo = DemoStruct::new(-1, -1);
 		let mut frame_count = 0;
+		let camera = self.camera.borrow_mut();
 		self.static_entities.push(Box::new(demo));
 		*g.borrow_mut() = Some(Closure::wrap(Box::new(move || {
 			frame_count += 1;
-			self.camera.update_screen_dimensions();
-			self.camera.clear();
+			camera.update_screen_dimensions();
+			camera.clear();
 			for i in &self.static_entities {
-				self.camera.draw(&i);
+				camera.draw(&i);
 			}
-			self.camera.set_zoom(self.camera.get_zoom() + 1);
+			// self.camera.set_zoom(self.camera.get_zoom() + 1);
 			request_animation_frame(f.borrow().as_ref().unwrap());
 		}) as Box<dyn FnMut()>));
 		request_animation_frame(g.borrow().as_ref().unwrap());
