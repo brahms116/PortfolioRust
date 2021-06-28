@@ -1,15 +1,32 @@
-pub struct Point {
-	pub x: i32,
-	pub y: i32,
+#[derive(Copy)]
+pub struct Vec2 {
+	pub x: f64,
+	pub y: f64,
 }
-impl Point {
-	pub fn new(x: i32, y: i32) -> Point {
-		Point { x: x, y: y }
+impl Vec2 {
+	pub fn new(x: f64, y: f64) -> Vec2 {
+		Vec2 { x: x, y: y }
+	}
+}
+impl Clone for Vec2 {
+	fn clone(&self) -> Vec2 {
+		Vec2::new(self.x, self.y)
 	}
 }
 
+pub enum Direction {
+	N,
+	NE,
+	E,
+	SE,
+	S,
+	SW,
+	W,
+	NW,
+}
+
 pub struct EntityDrawData {
-	pub vertices: Vec<Point>,
+	pub vertices: Vec<Vec2>,
 	pub color: String,
 }
 

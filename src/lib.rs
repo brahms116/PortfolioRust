@@ -1,6 +1,7 @@
 use wasm_bindgen::prelude::*;
 mod controllers;
 mod game_objects;
+mod options;
 mod scenes;
 mod utils;
 use controllers::input_controller::*;

@@ -31,14 +31,15 @@ impl SimulationScene {
 	pub fn start(mut self) {
 		let f = Rc::new(RefCell::<Option<Closure<dyn FnMut()>>>::new(None));
 		let g = Rc::clone(&f);
-		let demo = DemoStruct::new(-1, -1);
+		let demo = DemoStruct::new(-1.0, -1.0);
 		let mut frame_count = 0;
-		let camera = self.camera.borrow_mut();
 		self.static_entities.push(Box::new(demo));
 		*g.borrow_mut() = Some(Closure::wrap(Box::new(move || {
+			let mut camera = self.camera.borrow_mut();
 			frame_count += 1;
 			camera.update_screen_dimensions();
 			camera.clear();
+			camera.update_pos();
 			for i in &self.static_entities {
 				camera.draw(&i);
 			}
