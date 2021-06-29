@@ -146,7 +146,8 @@ impl Camera {
 		}
 	}
 	pub fn clear(&self) {
-		self.ctx.set_fill_style(&"#FFFFFF".into());
+		self.ctx.set_fill_style(&"#000000".into());
+
 		self.ctx.fill_rect(
 			0.0,
 			0.0,
@@ -154,7 +155,7 @@ impl Camera {
 			self.screen_height as f64,
 		)
 	}
-	pub fn draw(&self, entity: &Box<dyn Entity>) {
+	pub fn draw<T: Entity + ?Sized>(&self, entity: &Box<T>) {
 		let draw_data = entity.get_draw_data();
 		let vert_vec = draw_data.vertices;
 		self.ctx.begin_path();

@@ -1,4 +1,4 @@
-#[derive(Copy)]
+#[derive(Copy, Debug)]
 pub struct Vec2 {
 	pub x: f64,
 	pub y: f64,
@@ -33,3 +33,8 @@ pub struct EntityDrawData {
 pub trait Entity {
 	fn get_draw_data(&self) -> EntityDrawData;
 }
+
+pub trait Dynamic {
+	fn update(&mut self) -> ();
+}
+pub trait DynamicEntity: Entity + Dynamic {}
