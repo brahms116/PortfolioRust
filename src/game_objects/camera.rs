@@ -18,7 +18,7 @@ impl CameraTriggerAreaState {
 	}
 }
 pub struct Camera {
-	zoom: i32,
+	zoom: f64,
 	anchor: Vec2,
 	screen_height: i32,
 	screen_width: i32,
@@ -45,7 +45,7 @@ impl Camera {
 			.dyn_into::<web_sys::CanvasRenderingContext2d>()
 			.unwrap();
 		Camera {
-			zoom: 1,
+			zoom: 1.0,
 			anchor: Vec2 { x: 0.0, y: 0.0 },
 			screen_height: 0,
 			screen_width: 0,
@@ -55,13 +55,53 @@ impl Camera {
 			trigger_area_state: CameraTriggerAreaState::new(),
 		}
 	}
-	pub fn get_zoom(&self) -> i32 {
+	pub fn get_zoom(&self) -> f64 {
 		self.zoom
 	}
-	pub fn set_zoom(&mut self, zoom: i32) {
+	pub fn set_zoom(&mut self, zoom: f64) {
 		self.zoom = zoom;
 	}
-	pub fn update_screen_dimensions(&mut self) {
+	pub fn draw<T: Entity + ?Sized>(&self, entity: &Box<T>) {
+		let draw_data = entity.get_draw_data();
+		let vert_vec = draw_data.vertices;
+		self.ctx.begin_path();
+		self.ctx.set_fill_style(&draw_data.color.into());
+
+		if vert_vec.len() != 0 && vert_vec.len() > 2 {
+			let mut screen_vert_vec = Vec::<Vec2>::new();
+			screen_vert_vec.reserve(vert_vec.len());
+			for vert in &vert_vec {
+				let x = (self.screen_width / 2) as f64 + (vert.x - self.anchor.x) * self.zoom as f64;
+				let y = (self.screen_height / 2) as f64 + (vert.y - self.anchor.y) * self.zoom as f64;
+				let x = x.floor();
+				let y = y.floor();
+				screen_vert_vec.push(Vec2 { x: x, y: y });
+			}
+			self.ctx.move_to(screen_vert_vec[0].x, screen_vert_vec[0].y);
+			for vert in &screen_vert_vec[1..] {
+				self.ctx.line_to(vert.x, vert.y);
+			}
+			self.ctx.fill();
+		}
+	}
+	pub fn get_screen_dimensions(&self) -> (i32, i32) {
+		(self.screen_width, self.screen_height)
+	}
+	pub fn get_anchor(&self) -> Vec2 {
+		self.anchor
+	}
+	pub fn set_anchor(&mut self, loc: Vec2) {
+		self.anchor = loc;
+	}
+	pub fn set_trigger_area_state(&mut self, trigger_area_state: CameraTriggerAreaState) {
+		self.trigger_area_state = trigger_area_state;
+	}
+	pub fn update(&mut self) {
+		self.update_screen_dimensions();
+		self.clear();
+		self.update_pos_from_mouse();
+	}
+	fn update_screen_dimensions(&mut self) {
 		self.screen_height = self
 			.window
 			.inner_height()
@@ -73,7 +113,7 @@ impl Camera {
 		self.canvas.set_height(self.screen_height as u32);
 		self.canvas.set_width(self.screen_width as u32);
 	}
-	pub fn update_pos(&mut self) {
+	fn update_pos_from_mouse(&mut self) {
 		if self.trigger_area_state.is_n && self.trigger_area_state.is_e {
 			self.move_camera(Direction::NE);
 		} else if self.trigger_area_state.is_n && self.trigger_area_state.is_w {
@@ -92,7 +132,7 @@ impl Camera {
 			self.move_camera(Direction::W);
 		}
 	}
-	pub fn move_camera(&mut self, direction: Direction) {
+	fn move_camera(&mut self, direction: Direction) {
 		let cur_loc = self.get_anchor();
 		match direction {
 			Direction::N => {
@@ -145,8 +185,8 @@ impl Camera {
 			}
 		}
 	}
-	pub fn clear(&self) {
-		self.ctx.set_fill_style(&"#000000".into());
+	fn clear(&self) {
+		self.ctx.set_fill_style(&"#ffffff".into());
 
 		self.ctx.fill_rect(
 			0.0,
@@ -154,40 +194,5 @@ impl Camera {
 			self.screen_width as f64,
 			self.screen_height as f64,
 		)
-	}
-	pub fn draw<T: Entity + ?Sized>(&self, entity: &Box<T>) {
-		let draw_data = entity.get_draw_data();
-		let vert_vec = draw_data.vertices;
-		self.ctx.begin_path();
-		self.ctx.set_fill_style(&draw_data.color.into());
-
-		if vert_vec.len() != 0 && vert_vec.len() > 2 {
-			let mut screen_vert_vec = Vec::<Vec2>::new();
-			screen_vert_vec.reserve(vert_vec.len());
-			for vert in &vert_vec {
-				let x = (self.screen_width / 2) as f64 + (vert.x - self.anchor.x) * self.zoom as f64;
-				let y = (self.screen_height / 2) as f64 + (vert.y - self.anchor.y) * self.zoom as f64;
-				let x = x.floor();
-				let y = y.floor();
-				screen_vert_vec.push(Vec2 { x: x, y: y });
-			}
-			self.ctx.move_to(screen_vert_vec[0].x, screen_vert_vec[0].y);
-			for vert in &screen_vert_vec[1..] {
-				self.ctx.line_to(vert.x, vert.y);
-			}
-			self.ctx.fill();
-		}
-	}
-	pub fn get_screen_dimensions(&self) -> (i32, i32) {
-		(self.screen_width, self.screen_height)
-	}
-	pub fn get_anchor(&self) -> Vec2 {
-		self.anchor
-	}
-	pub fn set_anchor(&mut self, loc: Vec2) {
-		self.anchor = loc;
-	}
-	pub fn set_trigger_area_state(&mut self, trigger_area_state: CameraTriggerAreaState) {
-		self.trigger_area_state = trigger_area_state;
 	}
 }

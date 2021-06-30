@@ -1,11 +1,9 @@
 use crate::controllers::simulation_controller::*;
-use crate::game_objects::camera::*;
-use crate::options::*;
 use std::cell::RefCell;
 use std::rc::Rc;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::console;
+// use web_sys::console;
 
 pub struct InputController {
 	pub stage: Rc<RefCell<i32>>,
@@ -40,6 +38,14 @@ impl InputController {
 			}) as Box<dyn FnMut(_)>);
 			window
 				.add_event_listener_with_callback("mousemove", closure.as_ref().unchecked_ref())
+				.unwrap();
+			closure.forget();
+		}
+		{
+			let closure =
+				Closure::wrap(Box::new(move |_event: web_sys::MouseEvent| {}) as Box<dyn FnMut(_)>);
+			window
+				.add_event_listener_with_callback("mouseclick", closure.as_ref().unchecked_ref())
 				.unwrap();
 			closure.forget();
 		}
