@@ -2,6 +2,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
+
 mod controllers;
 mod game_objects;
 mod options;
@@ -42,10 +43,16 @@ pub fn run() {
         closure.forget();
     }
     {
-        let closure =
-            Closure::wrap(Box::new(move |_event: web_sys::MouseEvent| {}) as Box<dyn FnMut(_)>);
+        let closure = Closure::wrap(Box::new(move |event: web_sys::MouseEvent| {
+            let element: web_sys::Element = event
+                .target()
+                .unwrap()
+                .dyn_into::<web_sys::Element>()
+                .unwrap();
+            web_sys::console::log_1(&element.tag_name().into());
+        }) as Box<dyn FnMut(_)>);
         window
-            .add_event_listener_with_callback("mouseclick", closure.as_ref().unchecked_ref())
+            .add_event_listener_with_callback("click", closure.as_ref().unchecked_ref())
             .unwrap();
         closure.forget();
     }

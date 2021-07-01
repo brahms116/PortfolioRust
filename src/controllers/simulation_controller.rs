@@ -1,8 +1,6 @@
 use crate::game_objects::camera::*;
 use crate::options::*;
 use crate::scenes::simulation_scene::*;
-use std::cell::RefCell;
-use std::rc::Rc;
 
 pub struct SimulationController {
 	camera: Camera,

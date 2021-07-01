@@ -1,19 +1,7 @@
-use crate::controllers::simulation_controller::SimulationController;
-use crate::game_objects::camera::Camera;
 use crate::game_objects::triangle::*;
 use crate::utils::*;
 use rand;
-use std::cell::RefCell;
-use std::rc::Rc;
-use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsCast;
 
-fn request_animation_frame(f: &Closure<dyn FnMut()>) {
-	web_sys::window()
-		.unwrap()
-		.request_animation_frame(f.as_ref().unchecked_ref())
-		.unwrap();
-}
 pub struct SimulationScene {
 	static_entities: Vec<Box<dyn Entity>>,
 	dynamic_entities: Vec<Box<dyn DynamicEntity>>,

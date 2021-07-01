@@ -38,3 +38,9 @@ pub trait Dynamic {
 	fn update(&mut self) -> ();
 }
 pub trait DynamicEntity: Entity + Dynamic {}
+
+pub enum TweenState {
+	Idle,
+	Increasing,
+	Decreasing,
+}

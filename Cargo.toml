@@ -21,6 +21,7 @@ features = [
   'Document',
   'HtmlCanvasElement',
   'CanvasRenderingContext2d',
+  'CssStyleDeclaration',
   'WheelEvent',
   'MouseEvent',
   'Element',
