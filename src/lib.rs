@@ -7,6 +7,7 @@ mod controllers;
 mod game_objects;
 mod options;
 mod scenes;
+mod templates;
 mod utils;
 use controllers::simulation_controller::*;
 fn request_animation_frame(f: &Closure<dyn FnMut()>) {

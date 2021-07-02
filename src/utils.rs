@@ -1,3 +1,4 @@
+use crate::templates::bind_models::*;
 #[derive(Copy, Debug)]
 pub struct Vec2 {
 	pub x: f64,
@@ -43,4 +44,10 @@ pub enum TweenState {
 	Idle,
 	Increasing,
 	Decreasing,
+}
+
+pub trait Template {
+	fn update(&self) -> ();
+	fn get_template(&self) -> &String;
+	fn set_bind_model(&mut self, model: Option<MessageModels>);
 }
