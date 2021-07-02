@@ -2,15 +2,16 @@ use crate::templates::bind_models::*;
 use crate::utils::*;
 
 pub struct MenuButton {
-	template: String,
-	icon_html: String,
-	bind_model: Option<MessageModels>,
+  template: String,
+  menu_icon: String,
+  close_icon: String,
+  bind_model: Option<MessageModels>,
 }
 
 impl MenuButton {
-	pub fn new() -> MenuButton {
-		let icon_html = String::from(
-			"
+  pub fn new() -> MenuButton {
+    let menu_icon = String::from(
+      "
       <svg
         xmlns=\"http://www.w3.org/2000/svg\"
         class=\"h-6 w-6\"
@@ -26,10 +27,14 @@ impl MenuButton {
         />
       </svg>
     ",
-		);
+    );
+    let close_icon = String::from("<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">
+      <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\" />
+    </svg>
+    ");
 
-		let template = String::from(
-			"
+    let template = String::from(
+      "
 		<div
       class=\"
         fixed
@@ -50,21 +55,36 @@ impl MenuButton {
       \"
 			id=\"icon_button_wrapper\"
     ></div>",
-		);
-		MenuButton {
-			template,
-			icon_html,
-			bind_model: None,
-		}
-	}
+    );
+    MenuButton {
+      template,
+      menu_icon,
+      close_icon,
+      bind_model: None,
+    }
+  }
 }
 
 impl Template for MenuButton {
-	fn get_template(&self) -> &String {
-		&self.template
-	}
-	fn set_bind_model(&mut self, model: Option<MessageModels>) {
-		self.bind_model = model;
-	}
-	fn update(&self) {}
+  fn get_template(&self) -> &String {
+    &self.template
+  }
+  fn set_bind_model(&mut self, model: Option<MessageModels>) {
+    self.bind_model = model;
+  }
+  fn update(&self) {
+    if let Some(message) = &self.bind_model {
+      match message {
+        MessageModels::MenuButton(model) => {
+          let document = web_sys::window().unwrap().document().unwrap();
+          let element = document.get_element_by_id("icon_button_wrapper").unwrap();
+          element.set_inner_html(if model.is_menu_open {
+            &self.close_icon
+          } else {
+            &self.menu_icon
+          });
+        }
+      }
+    }
+  }
 }

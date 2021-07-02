@@ -1,3 +1,4 @@
+use crate::controllers::ui_controller::*;
 use crate::game_objects::camera::*;
 use crate::options::*;
 use crate::scenes::simulation_scene::*;
@@ -5,12 +6,14 @@ use crate::scenes::simulation_scene::*;
 pub struct SimulationController {
 	camera: Camera,
 	scene: SimulationScene,
+	ui_controller: UiController,
 }
 impl SimulationController {
 	pub fn new() -> SimulationController {
 		SimulationController {
 			camera: Camera::new(),
 			scene: SimulationScene::new(),
+			ui_controller: UiController::new(),
 		}
 	}
 	pub fn update(&mut self) {
@@ -23,6 +26,7 @@ impl SimulationController {
 		for i in dynamic_entities {
 			self.camera.draw(i);
 		}
+		self.ui_controller.update();
 	}
 	pub fn handle_zoom(&mut self, delta_y: i32) {
 		let current_zoom = self.camera.get_zoom();

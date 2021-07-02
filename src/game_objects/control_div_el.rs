@@ -1,9 +1,11 @@
+use crate::templates::bind_models::*;
 use crate::utils::*;
 use wasm_bindgen::JsCast;
+
 pub struct ControlDivEl {
 	id: String,
 	element: web_sys::HtmlElement,
-	child: Option<web_sys::HtmlElement>,
+	child: Option<Box<dyn Template>>,
 	is_displayed: bool,
 	opacity_animation_state: TweenState,
 }
@@ -20,6 +22,14 @@ impl ControlDivEl {
 		element.set_id(&id);
 		element.style().set_property("display", "none").unwrap();
 		element.style().set_property("opacity", "0").unwrap();
+		web_sys::window()
+			.unwrap()
+			.document()
+			.unwrap()
+			.body()
+			.unwrap()
+			.append_child(&element)
+			.unwrap();
 		let control = ControlDivEl {
 			id,
 			element,
@@ -29,7 +39,17 @@ impl ControlDivEl {
 		};
 		control
 	}
-	pub fn append_child() {}
+	pub fn append_child(&mut self, child: Box<dyn Template>) {
+		self.child = Some(child);
+		self
+			.element
+			.set_inner_html(&self.child.as_ref().unwrap().get_template());
+	}
+	pub fn bind_model(&mut self, model: Option<MessageModels>) {
+		if let Some(child) = self.child.as_mut() {
+			child.set_bind_model(model);
+		}
+	}
 	pub fn show(&mut self) {
 		self
 			.element
