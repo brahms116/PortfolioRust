@@ -65,10 +65,13 @@ impl ControlDivEl {
 		self.opacity_animation_state = TweenState::Decreasing;
 	}
 	pub fn update(&mut self) {
+		if let Some(child) = self.child.as_mut() {
+			child.update();
+		}
 		let curr_opacity = self
 			.element
 			.style()
-			.get_property_value("opcaity")
+			.get_property_value("opacity")
 			.unwrap()
 			.parse::<f64>()
 			.unwrap();
@@ -79,7 +82,7 @@ impl ControlDivEl {
 					self
 						.element
 						.style()
-						.set_property("opacity", &format!("{:.2}", curr_opacity + 1.0))
+						.set_property("opacity", &format!("{:.2}", curr_opacity + 0.02))
 						.unwrap();
 				} else {
 					self.is_displayed = true;
@@ -91,7 +94,7 @@ impl ControlDivEl {
 					self
 						.element
 						.style()
-						.set_property("opacity", &format!("{:.2}", curr_opacity - 1.0))
+						.set_property("opacity", &format!("{:.2}", curr_opacity - 0.02))
 						.unwrap();
 				} else {
 					self.is_displayed = false;

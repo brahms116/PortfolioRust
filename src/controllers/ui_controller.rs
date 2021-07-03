@@ -1,4 +1,5 @@
 use crate::game_objects::control_div_el::*;
+use crate::templates::bind_models::*;
 use crate::templates::menu_button::*;
 use crate::utils::*;
 pub struct UiController {
@@ -13,6 +14,9 @@ impl UiController {
 		let menu_button: Box<dyn Template> = Box::new(MenuButton::new());
 		menu_button_control.append_child(menu_button);
 		menu_button_control.show();
+		menu_button_control.bind_model(Some(MessageModels::MenuButton(MenuButtonModel {
+			is_menu_open: false,
+		})));
 		let controller = UiController {
 			menu_button_control,
 			full_page_control: ControlDivEl::new("full_page_control".into()),
@@ -21,6 +25,6 @@ impl UiController {
 		controller
 	}
 	pub fn update(&mut self) {
-		// self.menu_button_control.update();
+		self.menu_button_control.update();
 	}
 }
