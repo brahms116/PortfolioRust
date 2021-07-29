@@ -1,5 +1,7 @@
 use crate::templates::bind_models::*;
-use crate::utils::*;
+use crate::utils::entity::*;
+use crate::utils::ui::*;
+use crate::utils::vector_2::*;
 use wasm_bindgen::JsCast;
 
 pub struct ControlDivEl {

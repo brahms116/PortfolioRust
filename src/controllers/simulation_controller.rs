@@ -18,13 +18,9 @@ impl SimulationController {
 	}
 	pub fn update(&mut self) {
 		self.camera.update();
-		let entities = self.scene.get_entities();
-		let dynamic_entities = self.scene.get_dynamic_entities();
-		for i in entities {
-			self.camera.draw(i);
-		}
-		for i in dynamic_entities {
-			self.camera.draw(i);
+		let draw_data = self.scene.get_entities_draw_data();
+		for data in draw_data {
+			self.camera.draw(data);
 		}
 		self.ui_controller.update();
 	}

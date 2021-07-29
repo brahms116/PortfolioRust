@@ -1,5 +1,7 @@
 use crate::options::*;
-use crate::utils::*;
+use crate::utils::direction::*;
+use crate::utils::entity::*;
+use crate::utils::vector_2::*;
 use wasm_bindgen::JsCast;
 pub struct CameraTriggerAreaState {
 	pub is_n: bool,
@@ -61,27 +63,28 @@ impl Camera {
 	pub fn set_zoom(&mut self, zoom: f64) {
 		self.zoom = zoom;
 	}
-	pub fn draw<T: Entity + ?Sized>(&self, entity: &Box<T>) {
-		let draw_data = entity.get_draw_data();
-		let vert_vec = draw_data.vertices;
-		self.ctx.begin_path();
-		self.ctx.set_fill_style(&draw_data.color.into());
+	pub fn draw(&self, draw_data: EntityDrawData) {
+		for surface in &draw_data.surfaces {
+			let vert_vec = &surface.vertices;
+			self.ctx.begin_path();
+			self.ctx.set_fill_style(&surface.color.into());
 
-		if vert_vec.len() != 0 && vert_vec.len() > 2 {
-			let mut screen_vert_vec = Vec::<Vec2>::new();
-			screen_vert_vec.reserve(vert_vec.len());
-			for vert in &vert_vec {
-				let x = (self.screen_width / 2) as f64 + (vert.x - self.anchor.x) * self.zoom as f64;
-				let y = (self.screen_height / 2) as f64 + (vert.y - self.anchor.y) * self.zoom as f64;
-				let x = x.floor();
-				let y = y.floor();
-				screen_vert_vec.push(Vec2 { x: x, y: y });
+			if vert_vec.len() != 0 && vert_vec.len() > 2 {
+				let mut screen_vert_vec = Vec::<Vec2>::new();
+				screen_vert_vec.reserve(vert_vec.len());
+				for vert in vert_vec {
+					let x = (self.screen_width / 2) as f64 + (vert.x - self.anchor.x) * self.zoom as f64;
+					let y = (self.screen_height / 2) as f64 + (vert.y - self.anchor.y) * self.zoom as f64;
+					let x = x.floor();
+					let y = y.floor();
+					screen_vert_vec.push(Vec2 { x: x, y: y });
+				}
+				self.ctx.move_to(screen_vert_vec[0].x, screen_vert_vec[0].y);
+				for vert in &screen_vert_vec[1..] {
+					self.ctx.line_to(vert.x, vert.y);
+				}
+				self.ctx.fill();
 			}
-			self.ctx.move_to(screen_vert_vec[0].x, screen_vert_vec[0].y);
-			for vert in &screen_vert_vec[1..] {
-				self.ctx.line_to(vert.x, vert.y);
-			}
-			self.ctx.fill();
 		}
 	}
 	pub fn get_screen_dimensions(&self) -> (i32, i32) {
@@ -161,32 +164,32 @@ impl Camera {
 			}
 			Direction::NE => {
 				self.set_anchor(Vec2::new(
-					cur_loc.x + CAMERA_SPD as f64 * DIAG_MOV_UNIT * 1.0 / self.zoom as f64,
-					cur_loc.y - CAMERA_SPD as f64 * DIAG_MOV_UNIT * 1.0 / self.zoom as f64,
+					cur_loc.x + CAMERA_SPD as f64 * DIAG_MOVT_UNIT * 1.0 / self.zoom as f64,
+					cur_loc.y - CAMERA_SPD as f64 * DIAG_MOVT_UNIT * 1.0 / self.zoom as f64,
 				));
 			}
 			Direction::NW => {
 				self.set_anchor(Vec2::new(
-					cur_loc.x - CAMERA_SPD as f64 * DIAG_MOV_UNIT * 1.0 / self.zoom as f64,
-					cur_loc.y - CAMERA_SPD as f64 * DIAG_MOV_UNIT * 1.0 / self.zoom as f64,
+					cur_loc.x - CAMERA_SPD as f64 * DIAG_MOVT_UNIT * 1.0 / self.zoom as f64,
+					cur_loc.y - CAMERA_SPD as f64 * DIAG_MOVT_UNIT * 1.0 / self.zoom as f64,
 				));
 			}
 			Direction::SW => {
 				self.set_anchor(Vec2::new(
-					cur_loc.x - CAMERA_SPD as f64 * DIAG_MOV_UNIT * 1.0 / self.zoom as f64,
-					cur_loc.y + CAMERA_SPD as f64 * DIAG_MOV_UNIT * 1.0 / self.zoom as f64,
+					cur_loc.x - CAMERA_SPD as f64 * DIAG_MOVT_UNIT * 1.0 / self.zoom as f64,
+					cur_loc.y + CAMERA_SPD as f64 * DIAG_MOVT_UNIT * 1.0 / self.zoom as f64,
 				));
 			}
 			Direction::SE => {
 				self.set_anchor(Vec2::new(
-					cur_loc.x + CAMERA_SPD as f64 * DIAG_MOV_UNIT * 1.0 / self.zoom as f64,
-					cur_loc.y + CAMERA_SPD as f64 * DIAG_MOV_UNIT * 1.0 / self.zoom as f64,
+					cur_loc.x + CAMERA_SPD as f64 * DIAG_MOVT_UNIT * 1.0 / self.zoom as f64,
+					cur_loc.y + CAMERA_SPD as f64 * DIAG_MOVT_UNIT * 1.0 / self.zoom as f64,
 				));
 			}
 		}
 	}
 	fn clear(&self) {
-		self.ctx.set_fill_style(&"#ffffff".into());
+		self.ctx.set_fill_style(&"#DBFFAC".into());
 
 		self.ctx.fill_rect(
 			0.0,

@@ -1,5 +1,5 @@
 use crate::templates::bind_models::*;
-use crate::utils::*;
+use crate::utils::ui::*;
 
 pub struct MenuButton {
   template: String,
