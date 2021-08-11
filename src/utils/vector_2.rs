@@ -1,4 +1,6 @@
 use crate::options::*;
+use crate::utils::direction::*;
+use crate::utils::transform::SinglePointTransform;
 use std::f64::consts::PI;
 use std::ops;
 
@@ -13,6 +15,42 @@ impl Vec2 {
 	}
 	pub fn get_magnitude(&self) -> f64 {
 		(self.x.powi(2) + self.y.powi(2)).powf(0.5)
+	}
+
+	pub fn get_direction(&self) -> Direction {
+		let is_y_positive = self.y > 0.0;
+		let is_x_positive = self.x > 0.0;
+		let is_y_0 = self.y == 0.0;
+		let is_x_0 = self.x == 0.0;
+
+		// if is_x_0&&is_y_0{
+		// 	return Direction::N;
+		// }
+		if is_x_0 && is_y_positive {
+			return Direction::S;
+		}
+		if is_x_0 && !is_y_positive {
+			return Direction::N;
+		}
+		if is_x_positive && is_y_0 {
+			return Direction::E;
+		}
+		if is_x_positive && is_y_positive {
+			return Direction::SE;
+		}
+		if is_x_positive && !is_y_positive {
+			return Direction::NE;
+		}
+		if !is_x_positive && is_y_0 {
+			return Direction::W;
+		}
+		if !is_x_positive && is_y_positive {
+			return Direction::SW;
+		}
+		if !is_x_positive && !is_y_positive {
+			return Direction::NW;
+		}
+		Direction::N
 	}
 	pub fn rotate(&mut self, origin: Vec2, clockwise_steps: i32) {
 		if clockwise_steps > 7 {
@@ -52,12 +90,29 @@ impl Vec2 {
 		self.x = displacement_vec.x + origin.x;
 		self.y = displacement_vec.y + origin.y;
 	}
+
+	pub fn to_absolute(&self, transform: &SinglePointTransform) -> Vec2 {
+		let mut result = self.clone() + transform.position;
+		match transform.direction {
+			Direction::NE => result.rotate(transform.position, 1),
+			Direction::E => result.rotate(transform.position, 2),
+			Direction::SE => result.rotate(transform.position, 3),
+			Direction::S => result.rotate(transform.position, 4),
+			Direction::SW => result.rotate(transform.position, 5),
+			Direction::W => result.rotate(transform.position, 6),
+			Direction::NW => result.rotate(transform.position, 7),
+			Direction::N => {}
+		}
+		result
+	}
+	pub fn to_absolute_vecs(mut vecs: Vec<Vec2>, transform: &SinglePointTransform) -> Vec<Vec2> {
+		let mut result = Vec::<Vec2>::new();
+		for vec in vecs.iter_mut() {
+			result.push(vec.to_absolute(transform));
+		}
+		result
+	}
 }
-// impl Clone for Vec2 {
-// 	fn clone(&self) -> Vec2 {
-// 		Vec2::new(self.x, self.y)
-// 	}
-// }
 
 impl ops::Add<Vec2> for Vec2 {
 	type Output = Vec2;
@@ -69,9 +124,27 @@ impl ops::Add<Vec2> for Vec2 {
 	}
 }
 
+impl ops::Add<&Vec2> for Vec2 {
+	type Output = Vec2;
+	fn add(self, _rhs: &Vec2) -> Vec2 {
+		Vec2 {
+			x: self.x + _rhs.x,
+			y: self.y + _rhs.y,
+		}
+	}
+}
 impl ops::Sub<Vec2> for Vec2 {
 	type Output = Self;
 	fn sub(self, _rhs: Self) -> Vec2 {
+		Vec2 {
+			x: self.x - _rhs.x,
+			y: self.y - _rhs.y,
+		}
+	}
+}
+impl ops::Sub<&Vec2> for Vec2 {
+	type Output = Self;
+	fn sub(self, _rhs: &Self) -> Vec2 {
 		Vec2 {
 			x: self.x - _rhs.x,
 			y: self.y - _rhs.y,

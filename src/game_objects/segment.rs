@@ -1,7 +1,8 @@
 use crate::options::*;
+use crate::utils::transform::TwoPointTransform;
 use crate::utils::vector_2::*;
 
-pub struct SegmentsByRelativeVecs {
+pub struct RelativeSegment {
 	pub start_pt: Vec2,
 	pub end_pt: Vec2,
 	pub nxt_segments: Vec<i32>,
@@ -13,35 +14,26 @@ pub struct Segment {
 	cars: Vec<i32>,
 	nxt_segments: Vec<i32>,
 	prev_segments: Vec<i32>,
-	start_pt: Vec2,
-	end_pt: Vec2,
+	transform: TwoPointTransform,
 	speed_limit: f64,
-	pub start_inset: f64,
-	pub end_inset: f64,
 }
 
 impl Segment {
-	pub fn new(id: &str, start_pt: Vec2, end_pt: Vec2, speed_limit: f64) -> Segment {
+	pub fn new(id: &str, transform: TwoPointTransform, speed_limit: f64) -> Segment {
+		// web_sys::console::log_2(&"Start".into(), &format!("{:?}", start_pt).into());
+		// web_sys::console::log_2(&"End".into(), &format!("{:?}", end_pt).into());
 		Segment {
 			id: String::from(id),
 			cars: vec![],
 			nxt_segments: vec![],
 			prev_segments: vec![],
-			start_pt,
-			end_pt,
+			transform,
 			speed_limit,
-			start_inset: 0.0,
-			end_inset: 0.0,
 		}
 	}
 
 	pub fn get_id<'a>(&'a self) -> &'a str {
 		&self.id
-	}
-
-	pub fn get_length(&self) -> f64 {
-		let diff_vec = self.end_pt - self.start_pt;
-		diff_vec.get_magnitude()
 	}
 
 	pub fn get_prev_segments(&self) -> &Vec<i32> {
@@ -56,12 +48,8 @@ impl Segment {
 		&self.cars
 	}
 
-	pub fn get_end_pt(&self) -> Vec2 {
-		self.end_pt
-	}
-
-	pub fn get_start_pt(&self) -> Vec2 {
-		self.start_pt
+	pub fn get_transform(&self) -> &TwoPointTransform {
+		&self.transform
 	}
 
 	pub fn get_speed_limit(&self) -> f64 {
@@ -70,7 +58,7 @@ impl Segment {
 
 	pub fn get_position_via_len(&self, len: f64) -> Vec2 {
 		let displacement = Vec2::new(SIN_45 * len, SIN_45 * len);
-		self.start_pt + displacement
+		self.transform.start_pt + displacement
 	}
 
 	pub fn add_nxt_seg(&mut self, idx: i32) {

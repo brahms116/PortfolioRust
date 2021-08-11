@@ -1,33 +1,44 @@
 use crate::game_objects::navigator::*;
 use crate::utils::direction::*;
-use crate::utils::entity::*;
+use crate::utils::entity::Dynamic;
+use crate::utils::entity::Entity;
+use crate::utils::entity::EntityDrawData;
+use crate::utils::entity::EntityUtils;
+use crate::utils::entity::Surface;
+use crate::utils::transform::SinglePointTransform;
 use crate::utils::vector_2::*;
 pub struct Car {
-	position: Vec2, // I need this to get the draw data
+	id: String,
+	transform: SinglePointTransform,
 	is_filled: bool,
 	color: String,
 	length: i32,
 	navigator: Navigator,
 	acceleration: f64,
 	velocity: f64,
-	direction: Direction,
+	draw_data: EntityDrawData,
 }
 
 impl Car {
-	pub fn new(is_filled: bool, color: String, position: Vec2, direction: Direction) -> Self {
+	pub fn new(is_filled: bool, color: String, transform: SinglePointTransform, id: String) -> Self {
 		Car {
-			position,
+			id,
+			transform,
 			is_filled,
 			color,
-			length: 9,
+			length: 6,
 			navigator: Navigator {
 				segment_length_travelled: 0.0,
 				offset: 0.0,
 			},
 			acceleration: 0.0,
 			velocity: 0.0,
-			direction,
+			draw_data: EntityDrawData { surfaces: vec![] },
 		}
+	}
+
+	pub fn get_id(&self) -> &String {
+		&self.id
 	}
 	pub fn get_navigator(&self) -> &Navigator {
 		&self.navigator
@@ -41,14 +52,7 @@ impl Car {
 	pub fn get_acceleration(&self) -> f64 {
 		self.acceleration
 	}
-
-	pub fn update(&mut self) {
-		self.acceleration += 1.0;
-	}
-}
-
-impl Entity for Car {
-	fn get_draw_data(&self) -> EntityDrawData {
+	fn set_draw_data(&mut self) {
 		let length_offset = self.get_length_offset();
 		if self.is_filled {
 			let relative_vecs = vec![
@@ -57,13 +61,12 @@ impl Entity for Car {
 				Vec2::new(2.0, length_offset),
 				Vec2::new(-2.0, length_offset),
 			];
-			let vertices =
-				EntityUtils::get_vert_from_vecs(self.position, &relative_vecs, &self.direction);
-			let car_surface = Surface {
-				vertices,
-				color: &self.color,
+			let mut car_surface = Surface {
+				vertices: relative_vecs,
+				color: self.color.clone(),
 			};
-			return EntityDrawData {
+			car_surface.to_absolute(&self.transform);
+			self.draw_data = EntityDrawData {
 				surfaces: vec![car_surface],
 			};
 		} else {
@@ -75,12 +78,10 @@ impl Entity for Car {
 				Vec2::new(2.0, -length_offset + 1.0),
 				Vec2::new(-2.0, -length_offset + 1.0),
 			];
-			let vertices =
-				EntityUtils::get_vert_from_vecs(self.position, &relative_vecs, &self.direction);
 
 			surfaces.push(Surface {
-				vertices,
-				color: &self.color,
+				vertices: relative_vecs,
+				color: self.color.clone(),
 			});
 
 			let relative_vecs = vec![
@@ -89,13 +90,9 @@ impl Entity for Car {
 				Vec2::new(1.0, length_offset),
 				Vec2::new(1.0, -length_offset),
 			];
-
-			let vertices =
-				EntityUtils::get_vert_from_vecs(self.position, &relative_vecs, &self.direction);
-
 			surfaces.push(Surface {
-				vertices,
-				color: &self.color,
+				vertices: relative_vecs,
+				color: self.color.clone(),
 			});
 
 			let relative_vecs = vec![
@@ -105,12 +102,9 @@ impl Entity for Car {
 				Vec2::new(2.0, length_offset - 1.0),
 			];
 
-			let vertices =
-				EntityUtils::get_vert_from_vecs(self.position, &relative_vecs, &self.direction);
-
 			surfaces.push(Surface {
-				vertices,
-				color: &self.color,
+				vertices: relative_vecs,
+				color: self.color.clone(),
 			});
 
 			let relative_vecs = vec![
@@ -119,16 +113,28 @@ impl Entity for Car {
 				Vec2::new(-1.0, -length_offset),
 				Vec2::new(-1.0, length_offset),
 			];
-
-			let vertices =
-				EntityUtils::get_vert_from_vecs(self.position, &relative_vecs, &self.direction);
-
 			surfaces.push(Surface {
-				vertices,
-				color: &self.color,
+				vertices: relative_vecs,
+				color: self.color.clone(),
 			});
 
-			return EntityDrawData { surfaces: surfaces };
+			for surface in &mut surfaces {
+				surface.to_absolute(&self.transform)
+			}
+			self.draw_data = EntityDrawData { surfaces }
 		}
+	}
+}
+
+impl Dynamic for Car {
+	fn update(&mut self) {
+		self.acceleration += 1.0;
+		self.set_draw_data();
+	}
+}
+
+impl Entity for Car {
+	fn get_draw_data(&self) -> &EntityDrawData {
+		&self.draw_data
 	}
 }

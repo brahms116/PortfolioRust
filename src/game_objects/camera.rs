@@ -63,30 +63,6 @@ impl Camera {
 	pub fn set_zoom(&mut self, zoom: f64) {
 		self.zoom = zoom;
 	}
-	pub fn draw(&self, draw_data: EntityDrawData) {
-		for surface in &draw_data.surfaces {
-			let vert_vec = &surface.vertices;
-			self.ctx.begin_path();
-			self.ctx.set_fill_style(&surface.color.into());
-
-			if vert_vec.len() != 0 && vert_vec.len() > 2 {
-				let mut screen_vert_vec = Vec::<Vec2>::new();
-				screen_vert_vec.reserve(vert_vec.len());
-				for vert in vert_vec {
-					let x = (self.screen_width / 2) as f64 + (vert.x - self.anchor.x) * self.zoom as f64;
-					let y = (self.screen_height / 2) as f64 + (vert.y - self.anchor.y) * self.zoom as f64;
-					let x = x.floor();
-					let y = y.floor();
-					screen_vert_vec.push(Vec2 { x: x, y: y });
-				}
-				self.ctx.move_to(screen_vert_vec[0].x, screen_vert_vec[0].y);
-				for vert in &screen_vert_vec[1..] {
-					self.ctx.line_to(vert.x, vert.y);
-				}
-				self.ctx.fill();
-			}
-		}
-	}
 	pub fn get_screen_dimensions(&self) -> (i32, i32) {
 		(self.screen_width, self.screen_height)
 	}
@@ -197,5 +173,32 @@ impl Camera {
 			self.screen_width as f64,
 			self.screen_height as f64,
 		)
+	}
+}
+
+impl Drawer for Camera {
+	fn draw(&self, draw_data: &EntityDrawData) {
+		for surface in &draw_data.surfaces {
+			let vert_vec = &surface.vertices;
+			self.ctx.begin_path();
+			self.ctx.set_fill_style(&surface.color.clone().into());
+
+			if vert_vec.len() != 0 && vert_vec.len() > 2 {
+				let mut screen_vert_vec = Vec::<Vec2>::new();
+				screen_vert_vec.reserve(vert_vec.len());
+				for vert in vert_vec {
+					let x = (self.screen_width / 2) as f64 + (vert.x - self.anchor.x) * self.zoom as f64;
+					let y = (self.screen_height / 2) as f64 + (vert.y - self.anchor.y) * self.zoom as f64;
+					let x = x.floor();
+					let y = y.floor();
+					screen_vert_vec.push(Vec2 { x: x, y: y });
+				}
+				self.ctx.move_to(screen_vert_vec[0].x, screen_vert_vec[0].y);
+				for vert in &screen_vert_vec[1..] {
+					self.ctx.line_to(vert.x, vert.y);
+				}
+				self.ctx.fill();
+			}
+		}
 	}
 }

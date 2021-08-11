@@ -1,38 +1,33 @@
-use crate::utils::direction::*;
+use crate::utils::transform::SinglePointTransform;
 use crate::utils::vector_2::*;
-pub struct EntityDrawData<'a> {
-	pub surfaces: Vec<Surface<'a>>,
+pub struct EntityDrawData {
+	pub surfaces: Vec<Surface>,
 }
-pub struct Surface<'a> {
+pub struct Surface {
 	pub vertices: Vec<Vec2>,
-	pub color: &'a str,
+	pub color: String,
+}
+
+impl Surface {
+	pub fn to_absolute(&mut self, transform: &SinglePointTransform) {
+		for vec in self.vertices.iter_mut() {
+			*vec = vec.to_absolute(transform)
+		}
+	}
 }
 
 pub trait Entity {
-	fn get_draw_data(&self) -> EntityDrawData;
+	fn get_draw_data(&self) -> &EntityDrawData;
+}
+
+pub trait Dynamic {
+	fn update(&mut self);
+}
+
+pub trait Drawer {
+	fn draw(&self, draw_data: &EntityDrawData);
 }
 
 pub struct EntityUtils;
 
-impl EntityUtils {
-	//Takes a north facing object with its relative vectors and returns list of vertices
-	pub fn get_vert_from_vecs(position: Vec2, vecs: &Vec<Vec2>, direction: &Direction) -> Vec<Vec2> {
-		let mut result = Vec::<Vec2>::new();
-		result.reserve(vecs.len());
-		for vec in vecs {
-			let mut new_vec = *vec + position;
-			match direction {
-				Direction::NE => new_vec.rotate(position, 1),
-				Direction::E => new_vec.rotate(position, 2),
-				Direction::SE => new_vec.rotate(position, 3),
-				Direction::S => new_vec.rotate(position, 4),
-				Direction::SW => new_vec.rotate(position, 5),
-				Direction::W => new_vec.rotate(position, 6),
-				Direction::NW => new_vec.rotate(position, 7),
-				Direction::N => {}
-			}
-			result.push(new_vec);
-		}
-		result
-	}
-}
+impl EntityUtils {}
