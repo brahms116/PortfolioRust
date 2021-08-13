@@ -25,31 +25,31 @@ impl RoadCap {
 	pub fn get_creation_data() -> RoadCreationData {
 		let relative_segments = vec![
 			RelativeSegment {
-				start_pt: Vec2::new(-3.0, 0.0),
-				end_pt: Vec2::new(-3.0, -2.0),
+				start_pt: Vec2::new(-8.0, 0.0),
+				end_pt: Vec2::new(-8.0, -4.0),
 				nxt_segments: vec![1],
 				prev_segments: vec![],
 			},
 			RelativeSegment {
-				start_pt: Vec2::new(-3.0, -2.0),
-				end_pt: Vec2::new(-2.0, -3.0),
+				start_pt: Vec2::new(-8.0, -4.0),
+				end_pt: Vec2::new(-4.0, -8.0),
 				nxt_segments: vec![2],
 				prev_segments: vec![0],
 			},
 			RelativeSegment {
-				start_pt: Vec2::new(-2.0, -3.0),
-				end_pt: Vec2::new(2.0, -3.0),
+				start_pt: Vec2::new(-4.0, -8.0),
+				end_pt: Vec2::new(4.0, -8.0),
 				nxt_segments: vec![3],
 				prev_segments: vec![1],
 			},
 			RelativeSegment {
-				start_pt: Vec2::new(2.0, -3.0),
+				start_pt: Vec2::new(8.0, -4.0),
 				end_pt: Vec2::new(3.0, -2.0),
 				nxt_segments: vec![4],
 				prev_segments: vec![2],
 			},
 			RelativeSegment {
-				start_pt: Vec2::new(3.0, -2.0),
+				start_pt: Vec2::new(8.0, -0.0),
 				end_pt: Vec2::new(3.0, 0.0),
 				nxt_segments: vec![],
 				prev_segments: vec![3],
@@ -79,12 +79,12 @@ impl RoadCap {
 		let mut surfaces = Vec::<Surface>::new();
 		//pavement
 		let relative_vecs = vec![
-			Vec2::new(-7.0, 0.0),
-			Vec2::new(-7.0, -2.0),
-			Vec2::new(-2.0, -7.0),
-			Vec2::new(2.0, -7.0),
-			Vec2::new(7.0, -2.0),
-			Vec2::new(7.0, 0.0),
+			Vec2::new(-18.0, 0.0),
+			Vec2::new(-18.0, -6.0),
+			Vec2::new(-4.0, -19.0),
+			Vec2::new(4.0, -19.0),
+			Vec2::new(18.0, -6.0),
+			Vec2::new(18.0, 0.0),
 		];
 
 		surfaces.push(Surface {
@@ -94,12 +94,12 @@ impl RoadCap {
 
 		// road
 		let relative_vecs = vec![
-			Vec2::new(-6.0, 0.0),
-			Vec2::new(-6.0, -2.0),
-			Vec2::new(-2.0, -6.0),
-			Vec2::new(2.0, -6.0),
-			Vec2::new(6.0, -2.0),
-			Vec2::new(6.0, 0.0),
+			Vec2::new(-16.0, 0.0),
+			Vec2::new(-16.0, -5.0),
+			Vec2::new(-4.0, -16.0),
+			Vec2::new(4.0, -16.0),
+			Vec2::new(16.0, -5.0),
+			Vec2::new(16.0, 0.0),
 		];
 
 		surfaces.push(Surface {

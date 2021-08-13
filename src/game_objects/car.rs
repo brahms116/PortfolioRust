@@ -20,13 +20,19 @@ pub struct Car {
 }
 
 impl Car {
-	pub fn new(is_filled: bool, color: String, transform: SinglePointTransform, id: String) -> Self {
+	pub fn new(
+		is_filled: bool,
+		color: String,
+		transform: SinglePointTransform,
+		id: String,
+		length: i32,
+	) -> Self {
 		Car {
 			id,
 			transform,
 			is_filled,
 			color,
-			length: 6,
+			length,
 			navigator: Navigator {
 				segment_length_travelled: 0.0,
 				offset: 0.0,
@@ -56,10 +62,10 @@ impl Car {
 		let length_offset = self.get_length_offset();
 		if self.is_filled {
 			let relative_vecs = vec![
-				Vec2::new(-2.0, -length_offset),
-				Vec2::new(2.0, -length_offset),
-				Vec2::new(2.0, length_offset),
-				Vec2::new(-2.0, length_offset),
+				Vec2::new(-4.0, -length_offset),
+				Vec2::new(4.0, -length_offset),
+				Vec2::new(4.0, length_offset),
+				Vec2::new(-4.0, length_offset),
 			];
 			let mut car_surface = Surface {
 				vertices: relative_vecs,
@@ -73,10 +79,10 @@ impl Car {
 			let mut surfaces = Vec::<Surface>::new();
 			surfaces.reserve(4);
 			let relative_vecs = vec![
-				Vec2::new(-2.0, -length_offset),
-				Vec2::new(2.0, -length_offset),
-				Vec2::new(2.0, -length_offset + 1.0),
-				Vec2::new(-2.0, -length_offset + 1.0),
+				Vec2::new(-4.0, -length_offset),
+				Vec2::new(4.0, -length_offset),
+				Vec2::new(4.0, -length_offset + 1.0),
+				Vec2::new(-4.0, -length_offset + 1.0),
 			];
 
 			surfaces.push(Surface {
@@ -85,10 +91,10 @@ impl Car {
 			});
 
 			let relative_vecs = vec![
-				Vec2::new(2.0, -length_offset),
-				Vec2::new(2.0, length_offset),
-				Vec2::new(1.0, length_offset),
-				Vec2::new(1.0, -length_offset),
+				Vec2::new(4.0, -length_offset),
+				Vec2::new(4.0, length_offset),
+				Vec2::new(3.0, length_offset),
+				Vec2::new(3.0, -length_offset),
 			];
 			surfaces.push(Surface {
 				vertices: relative_vecs,
@@ -96,10 +102,10 @@ impl Car {
 			});
 
 			let relative_vecs = vec![
-				Vec2::new(2.0, length_offset),
-				Vec2::new(-2.0, length_offset),
-				Vec2::new(-2.0, length_offset - 1.0),
-				Vec2::new(2.0, length_offset - 1.0),
+				Vec2::new(4.0, length_offset),
+				Vec2::new(-4.0, length_offset),
+				Vec2::new(-3.0, length_offset - 1.0),
+				Vec2::new(3.0, length_offset - 1.0),
 			];
 
 			surfaces.push(Surface {
@@ -108,10 +114,10 @@ impl Car {
 			});
 
 			let relative_vecs = vec![
-				Vec2::new(-2.0, length_offset),
-				Vec2::new(-2.0, -length_offset),
-				Vec2::new(-1.0, -length_offset),
-				Vec2::new(-1.0, length_offset),
+				Vec2::new(-4.0, length_offset),
+				Vec2::new(-4.0, -length_offset),
+				Vec2::new(-3.0, -length_offset),
+				Vec2::new(-3.0, length_offset),
 			];
 			surfaces.push(Surface {
 				vertices: relative_vecs,

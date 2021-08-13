@@ -15,6 +15,13 @@ pub struct RoadCreationData {
 	pub relative_joints: RoadJoints,
 }
 
+pub struct RoadCreationDataWithProperty {
+	pub relative_surfaces: Vec<Surface>,
+	pub relative_segments: Vec<RelativeSegment>,
+	pub relative_joints: RoadJoints,
+	pub relative_property_data: RoadPropertyData,
+}
+
 pub struct RoadData {
 	pub speed_limit: f64,
 	pub transform: SinglePointTransform,
@@ -27,6 +34,13 @@ pub struct BasicRoadConfig {
 	pub transform: SinglePointTransform,
 }
 
+pub struct RoadWithPropertyConfig {
+	pub speed_limit: f64,
+	pub transform: TwoPointTransform,
+	pub properties_left: i32,
+	pub properties_right: i32,
+}
+
 pub struct RoadReference {
 	pub road_type: RoadType,
 	pub index: i32,
@@ -34,6 +48,25 @@ pub struct RoadReference {
 pub struct PropertyData {
 	pub segment_index: i32,
 	pub direction: Direction,
+}
+
+impl PropertyData {
+	pub fn to_abolute(
+		&self,
+		transform: &SinglePointTransform,
+		created_segment_indices: &Vec<i32>,
+	) -> PropertyData {
+		let new_direction = Direction::from_i32(self.direction.to_i32() + transform.direction.to_i32());
+		PropertyData {
+			direction: new_direction,
+			segment_index: created_segment_indices[self.segment_index as usize],
+		}
+	}
+}
+
+pub struct RoadPropertyData {
+	pub left: Vec<PropertyData>,
+	pub right: Vec<PropertyData>,
 }
 pub struct Joint {
 	pub lane_format: String,
@@ -71,6 +104,22 @@ impl RoadJoints {
 		}
 		RoadJoints { list: result_map }
 	}
+}
+
+pub struct RoadPit {
+	pub transform: SinglePointTransform,
+}
+
+impl RoadPit {
+	pub fn build_pit(&self, segments: &mut Vec<RelativeSegment>) {}
+}
+
+pub struct RoadPitBuildResult {
+	pub segment_entry_1: i32,
+	pub segment_entry_2: i32,
+	pub segment_exit_1: i32,
+	pub segment_exit_2: i32,
+	pub relative_property_data: PropertyData,
 }
 
 pub trait Road: Entity {

@@ -43,8 +43,8 @@ impl SimulationScene {
 		});
 		scene.factory.create_car(CarConfig {
 			color: String::from("#e32222"),
-			starting_segment: 1,
-			length: 8,
+			starting_segment: 2,
+			length: 16,
 		});
 		scene
 	}

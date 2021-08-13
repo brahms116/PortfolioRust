@@ -115,7 +115,13 @@ impl Factory {
 			.get_transform()
 			.to_single_pt_transform();
 
-		let car = Car::new(false, config.color, transform, self.count.to_string());
+		let car = Car::new(
+			false,
+			config.color,
+			transform,
+			self.count.to_string(),
+			config.length,
+		);
 
 		let mut cars = self.cars.borrow_mut();
 		cars.push(car);

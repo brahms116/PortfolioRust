@@ -1,4 +1,5 @@
 pub mod road_cap;
+pub mod two_lane_road;
 use crate::utils::entity::*;
 use crate::utils::road::DynamicRoad;
 use crate::utils::road::Road;
