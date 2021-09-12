@@ -1,5 +1,10 @@
 use crate::utils::transform::SinglePointTransform;
 use crate::utils::vector_2::*;
+
+pub struct EntityData {
+	pub transform: SinglePointTransform,
+	pub draw_data: EntityDrawData,
+}
 pub struct EntityDrawData {
 	pub surfaces: Vec<Surface>,
 }
@@ -17,7 +22,7 @@ impl Surface {
 }
 
 pub trait Entity {
-	fn get_draw_data(&self) -> &EntityDrawData;
+	fn get_enitty_data(&self) -> &EntityData;
 }
 
 pub trait Dynamic {
@@ -27,7 +32,3 @@ pub trait Dynamic {
 pub trait Drawer {
 	fn draw(&self, draw_data: &EntityDrawData);
 }
-
-pub struct EntityUtils;
-
-impl EntityUtils {}

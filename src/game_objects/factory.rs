@@ -5,12 +5,14 @@ use crate::game_objects::roads::RoadType;
 use crate::game_objects::segment::RelativeSegment;
 use crate::game_objects::segment::Segment;
 use crate::utils::car::CarConfig;
+use crate::utils::entity::EntityData;
 use crate::utils::entity::EntityDrawData;
-use crate::utils::road::BasicRoadConfig;
+use crate::utils::factory_build_road_output::FactoryBuildRoadOutput;
 use crate::utils::road::Road;
-use crate::utils::road::RoadCreationData;
-use crate::utils::road::RoadData;
 use crate::utils::road::RoadReference;
+use crate::utils::road_config::SPTTransformRoadConfig;
+use crate::utils::road_creation_ingredients::RoadCreationIngredients;
+use crate::utils::road_data::RoadData;
 use crate::utils::transform::TwoPointTransform;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -49,7 +51,7 @@ impl Factory {
 	fn build_segments_from_relative(
 		&mut self,
 		relative_segments: &Vec<RelativeSegment>,
-		config: &BasicRoadConfig,
+		config: &SPTTransformRoadConfig,
 	) -> Vec<i32> {
 		let mut created_segment_indices = Vec::<i32>::new();
 		for segment in relative_segments {
@@ -77,9 +79,9 @@ impl Factory {
 
 	fn transform_road_data(
 		&mut self,
-		relative_data: RoadCreationData,
-		config: BasicRoadConfig,
-	) -> RoadData {
+		relative_data: RoadCreationIngredients,
+		config: SPTTransformRoadConfig,
+	) -> FactoryBuildRoadOutput {
 		let created_segment_indices =
 			self.build_segments_from_relative(&relative_data.relative_segments, &config);
 		let mut surfaces = relative_data.relative_surfaces;
@@ -89,7 +91,7 @@ impl Factory {
 		let joints = relative_data
 			.relative_joints
 			.to_absolute(&config.transform.direction, &created_segment_indices);
-		RoadData {
+		FactoryBuildRoadOutput {
 			speed_limit: config.speed_limit,
 			transform: config.transform,
 			joints,
@@ -128,12 +130,19 @@ impl Factory {
 		cars.len() as i32 - 1
 	}
 
-	pub fn create_road_cap(&mut self, config: BasicRoadConfig) -> RoadReference {
+	pub fn create_road_cap(&mut self, config: SPTTransformRoadConfig) -> RoadReference {
 		let creation_data = RoadCap::get_creation_data();
-		let road_data = self.transform_road_data(creation_data, config);
+		let build_output = self.transform_road_data(creation_data, config);
 		let road_cap = RoadCap {
 			id: self.count.to_string(),
-			data: road_data,
+			road_data: RoadData {
+				speed_limit: build_output.speed_limit,
+				joints: build_output.joints,
+			},
+			entity_data: EntityData {
+				transform: build_output.transform,
+				draw_data: build_output.draw_data,
+			},
 		};
 		self.add_static_road(Box::new(road_cap))
 	}

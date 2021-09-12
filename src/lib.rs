@@ -3,6 +3,7 @@ use std::rc::Rc;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 
+mod config;
 mod controllers;
 mod game_objects;
 mod options;

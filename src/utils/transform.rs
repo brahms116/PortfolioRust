@@ -24,3 +24,8 @@ pub struct SinglePointTransform {
 	pub position: Vec2,
 	pub direction: Direction,
 }
+
+pub trait HasTransform {
+	fn get_transform(&self) -> &SinglePointTransform;
+	fn get_transform_mut(&self) -> &mut SinglePointTransform;
+}

@@ -1,10 +1,11 @@
 pub mod road_cap;
-pub mod two_lane_road;
+// pub mod static_road;
+// pub mod two_lane_road;
 use crate::utils::entity::*;
+
 use crate::utils::road::DynamicRoad;
 use crate::utils::road::Road;
 use crate::utils::road::WithProperty;
-use road_cap::RoadCap;
 
 pub enum RoadType {
 	Static,
@@ -29,13 +30,13 @@ impl RoadState {
 	pub fn get_draw_data(&self) -> Vec<&EntityDrawData> {
 		let mut result_vec = Vec::<&EntityDrawData>::new();
 		for road in &self.static_roads {
-			result_vec.push(road.get_draw_data());
+			result_vec.push(&road.get_enitty_data().draw_data);
 		}
 		for road in &self.dynamic_roads {
-			result_vec.push(road.get_draw_data());
+			result_vec.push(&road.get_enitty_data().draw_data);
 		}
 		for road in &self.static_with_property {
-			result_vec.push(road.get_draw_data());
+			result_vec.push(&road.get_enitty_data().draw_data);
 		}
 		result_vec
 	}

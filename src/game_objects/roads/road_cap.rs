@@ -1,18 +1,18 @@
 use crate::game_objects::segment::*;
 use crate::utils::direction::Direction;
 use crate::utils::entity::*;
-use crate::utils::road::Joint;
 use crate::utils::road::Road;
-use crate::utils::road::RoadCreationData;
-use crate::utils::road::RoadData;
-use crate::utils::road::RoadJoints;
-use crate::utils::transform::SinglePointTransform;
+use crate::utils::road_creation_ingredients::RoadCreationIngredients;
+use crate::utils::road_data::RoadData;
+use crate::utils::road_joints::Joint;
+use crate::utils::road_joints::RoadJoints;
 use crate::utils::vector_2::Vec2;
 use std::collections::HashMap;
 
 pub struct RoadCap {
 	pub id: String,
-	pub data: RoadData,
+	pub road_data: RoadData,
+	pub entity_data: EntityData,
 }
 
 pub struct RoadCapRelativeSegments {
@@ -22,7 +22,7 @@ pub struct RoadCapRelativeSegments {
 }
 
 impl RoadCap {
-	pub fn get_creation_data() -> RoadCreationData {
+	pub fn get_creation_data() -> RoadCreationIngredients {
 		let relative_segments = vec![
 			RelativeSegment {
 				start_pt: Vec2::new(-8.0, 0.0),
@@ -66,7 +66,7 @@ impl RoadCap {
 				exit_segments: vec![4],
 			}],
 		);
-		RoadCreationData {
+		RoadCreationIngredients {
 			relative_joints: RoadJoints {
 				list: relative_joints,
 			},
@@ -115,12 +115,12 @@ impl Road for RoadCap {
 		&self.id
 	}
 	fn get_road_data(&self) -> &RoadData {
-		&self.data
+		&self.road_data
 	}
 }
 
 impl Entity for RoadCap {
-	fn get_draw_data(&self) -> &EntityDrawData {
-		&self.data.draw_data
+	fn get_enitty_data(&self) -> &EntityData {
+		&self.entity_data
 	}
 }

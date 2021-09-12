@@ -1,22 +1,20 @@
 use crate::game_objects::navigator::*;
-use crate::utils::direction::*;
 use crate::utils::entity::Dynamic;
 use crate::utils::entity::Entity;
+use crate::utils::entity::EntityData;
 use crate::utils::entity::EntityDrawData;
-use crate::utils::entity::EntityUtils;
 use crate::utils::entity::Surface;
 use crate::utils::transform::SinglePointTransform;
 use crate::utils::vector_2::*;
 pub struct Car {
 	id: String,
-	transform: SinglePointTransform,
 	is_filled: bool,
 	color: String,
 	length: i32,
 	navigator: Navigator,
 	acceleration: f64,
 	velocity: f64,
-	draw_data: EntityDrawData,
+	entity_data: EntityData,
 }
 
 impl Car {
@@ -29,7 +27,10 @@ impl Car {
 	) -> Self {
 		Car {
 			id,
-			transform,
+			entity_data: EntityData {
+				transform,
+				draw_data: EntityDrawData { surfaces: vec![] },
+			},
 			is_filled,
 			color,
 			length,
@@ -39,7 +40,6 @@ impl Car {
 			},
 			acceleration: 0.0,
 			velocity: 0.0,
-			draw_data: EntityDrawData { surfaces: vec![] },
 		}
 	}
 
@@ -71,8 +71,8 @@ impl Car {
 				vertices: relative_vecs,
 				color: self.color.clone(),
 			};
-			car_surface.to_absolute(&self.transform);
-			self.draw_data = EntityDrawData {
+			car_surface.to_absolute(&self.entity_data.transform);
+			self.entity_data.draw_data = EntityDrawData {
 				surfaces: vec![car_surface],
 			};
 		} else {
@@ -125,9 +125,9 @@ impl Car {
 			});
 
 			for surface in &mut surfaces {
-				surface.to_absolute(&self.transform)
+				surface.to_absolute(&self.entity_data.transform)
 			}
-			self.draw_data = EntityDrawData { surfaces }
+			self.entity_data.draw_data = EntityDrawData { surfaces }
 		}
 	}
 }
@@ -140,7 +140,7 @@ impl Dynamic for Car {
 }
 
 impl Entity for Car {
-	fn get_draw_data(&self) -> &EntityDrawData {
-		&self.draw_data
+	fn get_enitty_data(&self) -> &EntityData {
+		&self.entity_data
 	}
 }

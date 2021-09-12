@@ -1,7 +1,15 @@
 pub mod car;
 pub mod direction;
 pub mod entity;
+pub mod factory_build_road_output;
+pub mod lane_builder;
+pub mod property_data;
 pub mod road;
+pub mod road_config;
+pub mod road_creation_ingredients;
+pub mod road_data;
+pub mod road_joints;
+pub mod road_pit;
 pub mod transform;
 pub mod ui;
 pub mod vector_2;

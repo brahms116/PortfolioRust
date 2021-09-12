@@ -6,7 +6,7 @@ use crate::game_objects::segment::Segment;
 use crate::utils::car::CarConfig;
 use crate::utils::direction::*;
 use crate::utils::entity::*;
-use crate::utils::road::BasicRoadConfig;
+use crate::utils::road_config::SPTTransformRoadConfig;
 use crate::utils::transform::SinglePointTransform;
 use crate::utils::vector_2::*;
 use std::cell::RefCell;
@@ -34,7 +34,7 @@ impl SimulationScene {
 				roads: road_state,
 			}),
 		};
-		scene.factory.create_road_cap(BasicRoadConfig {
+		scene.factory.create_road_cap(SPTTransformRoadConfig {
 			speed_limit: 6.0,
 			transform: SinglePointTransform {
 				direction: Direction::N,
@@ -55,7 +55,7 @@ impl SimulationScene {
 			drawer.draw(data);
 		}
 		for car in cars.iter() {
-			drawer.draw(car.get_draw_data());
+			drawer.draw(&car.get_enitty_data().draw_data);
 		}
 	}
 }
